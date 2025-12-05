@@ -79,7 +79,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-    - ./secrets:/opt/airflow/secrets # ADD: Mount GCP Service Account key JSON (read only)
+    - ./secrets:/opt/airflow/secrets:ro # ADD: Mount GCP Service Account key JSON (read only)
     - ./data:/opt/airflow/data # ADD: Mount local data forlder to airflow
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
