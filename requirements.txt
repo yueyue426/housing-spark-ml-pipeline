@@ -1,0 +1,13 @@
+# Airflow Providers for connecting the GCP
+apache-airflow-providers-google
+
+# Google cloud storage
+google-cloud-storage
+
+# Libraries for data ingestion (reading the CSV, moving the data to BigQuery)
+pandas
+pandas-gbq
+
+# Pyspark
+pyspark
+pyarrow
