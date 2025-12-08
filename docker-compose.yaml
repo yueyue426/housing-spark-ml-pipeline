@@ -81,6 +81,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ./secrets:/opt/airflow/secrets:ro # ADD: Mount GCP Service Account key JSON (read only)
     - ./data:/opt/airflow/data # ADD: Mount local data forlder to airflow
+    - ./spark_jobs:/opt/airflow/spark_jobs # ADD: Mound spark job
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
