@@ -43,10 +43,20 @@ def housing_etl_pipeline():
         bash_command="""
             spark-submit \
             --master local[*] \
-            /opt/airflow/spark_jobs/staging_to_row_batches.py
+            /opt/airflow/spark_jobs/staging_to_raw_batches.py
         """,
     )
 
-    upload_to_staging >> staging_to_raw_batches
+    # Task 3: Train ML model and save the pipeline
+    train_ml_model = BashOperator(
+        task_id="train_ml_model",
+        bash_command="""
+            spark-submit \
+            --master local[*] \
+            /opt/airflow/spark_jobs/ml_model.py
+        """
+    )
+
+    upload_to_staging >> staging_to_raw_batches >> train_ml_model
 
 housing_etl_pipeline()

@@ -9,7 +9,7 @@ def main():
         raise ValueError("GCS_BUCKET is not set")
     
     input_path = f"gs://{bucket}/staging/housing.csv"
-    output_path = f"gs://{bucket}/raw/housing_batches/"
+    output_path = f"gs://{bucket}/processed/housing_batches/"
 
     # Initialize SparkSession
     spark = SparkSession.builder \
@@ -22,7 +22,7 @@ def main():
     df_cleaned = data_clean(df)
     df_featured = features_add(df_cleaned)
 
-    # Partition to 10 batches and write to GCS Raw
+    # Partition to 10 batches and write to GCS processed
     df_featured.repartition(10) \
                .write \
                .mode("overwrite") \
