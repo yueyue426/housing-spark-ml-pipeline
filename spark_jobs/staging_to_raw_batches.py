@@ -14,6 +14,10 @@ def main():
     # Initialize SparkSession
     spark = SparkSession.builder \
         .appName("staging_to_raw_batches") \
+        .config("spark.jars", "/opt/spark/jars/gcs-connector-hadoop3-2.2.9-shaded.jar") \
+        .config("spark.hadoop.fs.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem") \
+        .config("spark.hadoop.google.cloud.auth.service.account.enable", "true") \
+        .config("spark.hadoop.google.cloud.auth.service.account.json.keyfile", "/opt/airflow/secrets/gcp_service_account.json") \
         .getOrCreate()
     
     # Read .csv file from GCS staging

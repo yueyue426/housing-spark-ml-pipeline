@@ -7,7 +7,7 @@ from airflow.operators.bash import BashOperator
 # Constants configuration
 GCS_BUCKET = os.environ.get("GCS_BUCKET", "housing_ml_bucket")
 GCS_STAGING_OBJECT = "staging/housing.csv"
-LOCAL_FILE_PATH = "/opt/data/housing.csv"
+LOCAL_FILE_PATH = "/opt/airflow/data/raw/housing.csv"
 
 # Define default arguments
 default_args = {
@@ -42,9 +42,10 @@ def housing_etl_pipeline():
         task_id="staging_to_raw_batches",
         bash_command="""
             spark-submit \
-            --master local[*] \
-            /opt/airflow/spark_jobs/staging_to_raw_batches.py
-        """,
+                --master local[*] \
+                --jars /opt/spark/jars/gcs-connector-hadoop3-2.2.9-shaded.jar \
+                /opt/airflow/spark_jobs/staging_to_raw_batches.py
+            """,
     )
 
     # Task 3: Train ML model and save the pipeline
@@ -52,9 +53,10 @@ def housing_etl_pipeline():
         task_id="train_ml_model",
         bash_command="""
             spark-submit \
-            --master local[*] \
-            /opt/airflow/spark_jobs/ml_model.py
-        """
+                --master local[*] \
+                --jars /opt/spark/jars/gcs-connector-hadoop3-2.2.9-shaded.jar \
+                /opt/airflow/spark_jobs/ml_model.py
+            """,
     )
 
     upload_to_staging >> staging_to_raw_batches >> train_ml_model

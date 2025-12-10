@@ -32,6 +32,10 @@ def main():
     # Initialize SparkSession
     spark = SparkSession.builder \
         .appName("housing_ml_lr") \
+        .config("spark.jars", "/opt/spark/jars/gcs-connector-hadoop3-2.2.9-shaded.jar") \
+        .config("spark.hadoop.fs.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem") \
+        .config("spark.hadoop.google.cloud.auth.service.account.enable", "true") \
+        .config("spark.hadoop.google.cloud.auth.service.account.json.keyfile", "/opt/airflow/secrets/gcp_service_account.json") \
         .getOrCreate()
     
     # Load cleaned data from staging
@@ -71,16 +75,16 @@ def main():
     # Model evaluation
     predictions = train_model.transform(testing_data)
     evaluator_mae = RegressionEvaluator(predictionCol="prediction", labelCol=TARGET_COL, metricName="mae")
-    evaluator_mse = RegressionEvaluator(predictionCol="prediction", labelCol=TARGET_COL, metricName="mse")
+    evaluator_rmse = RegressionEvaluator(predictionCol="prediction", labelCol=TARGET_COL, metricName="rmse")
     evaluator_r2 = RegressionEvaluator(predictionCol="prediction", labelCol=TARGET_COL, metricName="r2")
 
     mae = evaluator_mae.evaluate(predictions)
-    mse = evaluator_mse.evaluate(predictions)
+    rmse = evaluator_rmse.evaluate(predictions)
     r2 = evaluator_r2.evaluate(predictions)
 
     print("=== Evaluation Metrics ===")
     print(f"MAE: {mae:.2f}")
-    print(f"MSE: {mse:.2f}")
+    print(f"RMSE: {rmse:.2f}")
     print(f"R2: {r2:.2f}")
 
     # Save model
