@@ -7,6 +7,7 @@ My goal of this project is to practice building an end-to-end ETL and machine le
 - [Pipeline Diagram](#pipeline-diagram)
 - [Project Reproduction](#project-reproduction-try-it-yourself)
 - [Project Structure](#project-structure)
+- [Sample Model Metrics](#sample-model-metrics)
 - [Future Improvements](#future-improvements)
 
 ## Technologies & Tools
@@ -121,16 +122,28 @@ The dataset used in this project is downloaded from Kaggle: [California housing 
 │   ├── data_clean.py
 │   ├── add_features.py
 │   └── ml_model.py
+├── logs/                              # Airflow logs
+├── plugins/                           # Custom Airflow plugins (optional)
+├── secrets/                           # Service account keys (not committed to Git)
+├── jars/                              # Additional Spark JAR dependencies
+├── .env                               # Environment variables for Airflow
 ├── docker-compose.yaml                # Airflow + Spark environment services
 ├── Dockerfile                         # Custom Docker image
 ├── requirements.txt                   # Project dependencies
 └── README.md                          # Project documentation
 ```
 ## Sample Model Metrics
-- **MAE**: Measures average prediction error in dollar value
-- **RMSE**: Penalizes large prediction errors
-- **$R^2$**: Indicates variance explained by the model
+- **MAE**: Shows how many dollars, on average, the predictions are off from the actual values.
+- **RMSE**: Similar to MAE but gives bigger penalties to large mistakes, so it highlights big errors more.
+- **$R^2$**: Tells how well the model fits the data — higher means the model explains more of the variation in house prices.
 
 ## Future Improvements
-- Add unit tests and CI/CD with GitHub Actions
+- Add automated tests
+    - Unit tests for Spark transformation functions (e.g., data_clean.py, add_features.py) to check schema, null handling, and feature values on small sample data.
+    - Integration tests that run the full staging_to_raw_batches.py job on a mini dataset and verify row counts, partitions, and output files in GCS.
+    - Airflow DAG tests to ensure the DAG loads correctly, task dependencies are valid, and retry logic behaves as expected.
+- Add data quality checks
+    - Validate schema, allowed value ranges, and missing values before training the model.
+    - Fail the pipeline or alert if data quality drops below a threshold.
+- Add basic logging and alerts for DAG failures or long runtimes.
 
